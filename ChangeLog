@@ -1,0 +1,923 @@
+2002-07-19  Koichi INOUE  <inoue@argv.org>
+
+	* bep-ss Version 2.2 released.
+	This is mainly  bug fix release.
+	Updated bep-eng.dic is included.
+
+2002-05-27  Koichi INOUE  <inoue@argv.org>
+
+	* outloudfunc.cpp (Outloud_Translate): Split caps dosn't modify
+	characters if it is the first character in the word.
+
+2002-05-19  Koichi INOUE  <inoue@argv.org>
+
+	* dtfunc.cpp (dt_speak): Conversion of zenkaku-alphabet was
+	incorrect. Fixed.
+
+2002-05-10  Koichi INOUE  <inoue@argv.org>
+
+	* bep-ss Version 2.1 released.
+
+	* README: Edited for new release.
+
+2002-05-08  Koichi INOUE  <inoue@argv.org>
+
+	* dtfunc.cpp (dt_speak): All english words not matched with words
+	in dictionary and not romaji are always spellout.
+
+2002-05-06  KIRIAKE Masanori  <seiken@ARGV.org>
+
+	* Change volume in Outloud.
+
+2002-05-06  Koichi INOUE  <inoue@argv.org>
+
+	* dt.h, dtfunc.cpp, dtvoice.h, dtvoice.cpp:
+	Use high tone in DT.
+
+	* dt.h, dtfunc.cpp, dtvoice.h, dtvoice.cpp:
+	Change volume in DT.
+
+	* dtfunc.cpp: indent-voice is used properly.
+
+	* dtvoice.cpp: Some voice definitions are changed.
+
+2002-05-04  Koichi INOUE  <inoue@argv.org>
+
+	* outloudfunc.cpp: Reads 'A' as 'ey'.
+
+	* outloud.h, outloudfunc.cpp: Call eciReset() after every
+	eciStop().
+	It seems to eliminate deadlock of Outloud thread. Really?
+
+	* Outloud.cpp: Not really...
+
+2002-04-21  Koichi INOUE  <inoue@argv.org>
+
+	* context.cpp, ssdefs.h: Now default language is SS_LANGUAGE_EN.
+	New macro SS_LANG_DEFAULT.
+
+2002-04-17  Koichi INOUE  <inoue@argv.org>
+
+	* dsp.cpp, dsp.h: Added playTone() method.
+	TTS Engine who has control of the DSP can send tone request to
+	this method.  No change in TTS Engine yet.
+
+2002-03-09  Koichi INOUE  <inoue@argv.org>
+
+	* context.cpp(ssContext::speak()): A queue only with spaces is
+	skipped, sequence of DSP use is broken. Fixed.
+
+	* context.cpp: again.
+
+2002-02-27  Koichi INOUE  <inoue@argv.org>
+
+	* dsp.cpp: releaseLock() sometimes locked up. Fixed.
+
+2002-02-23  Koichi INOUE  <inoue@argv.org>
+
+	* Changed name of command!
+	tts_set_speed_offset
+	-> tts_set_rate_offset
+	to match tts_set_rate.
+
+	* cmdproc.cpp: tts_set_speed_offset now works.(Added missing braces)
+
+	* context.cpp: Get name of sound device from BEP_SS_OUTPUT_DEVICE
+	environment variable. If it doesn't exist, uses default set by
+	config.h.
+
+2002-02-13  Koichi INOUE  <inoue@argv.org>
+
+	* README: Changed to catch up with current status.
+	* ssmain.cpp, ssdefs.h: Version display at startup.
+
+2002-02-02  Koichi INOUE  <inoue@localhost.localdomain>
+
+	* dsp.cpp:(open()): Succeeded to change buffer size of DSP device.
+	Now speaks very well even with VMWare's SB16 emulation.
+
+2002-01-30  Koichi INOUE  <inoue@argv.org>
+
+	* outloudfunc.cpp(replace_reading()): When punctuation mode is
+	all, symbol characters are treated in much the same way as TCL
+	outloud server does. Not for some and none, because they are a
+	little complex for C++, without regexp.
+
+2002-01-29  Koichi INOUE  <inoue@argv.org>
+
+	* cmdproc.cpp: 'q' command was not working correctly when newline
+	apears immediately after "q {". Fixed.
+
+	* outloud.h, outloudfunc.cpp: Workaround to avoid lockup of
+	Outloud in some environment. Now callback function takes
+	TTS_Outloud class pointer and checks status flag by itself.
+	For this change, getDsp() and isStop() member functions became
+	public. It is not beautiful.
+
+2002-01-29  KIRIAKE Masanori  <seiken@argv.org>
+
+	* outloud.h, outloud.cpp: Outloud works fine by putting the PCM
+	buffer in static memory and changing order of RegisterCallback and
+	setOutputBuffer. Now outloud writes its output to shared sound
+	device and works with soundcards (drivers) which doesn't support
+	multiple open of the same device.
+
+2002-01-28  Koichi INOUE  <inoue@argv.org>
+
+	* cmdproc, context: tts_set_speed_offset is implemented.
+	tts_set_speed_offset <lang> <offset>
+	and tts_sync_state is now more stable using sscanf().
+
+	* cmdproc.cpp, cmdproc.h: Now command is a string and it is mapped
+	to member function in the constructor. It is easier to add new
+	command, to change command name, and to make aliases.
+	If you want to add new command, implement the command function,
+	put the mapping in the constructor of ssCommandProcessor, and
+	don't forget to change the TOTAL_COMMAND_NUM macro!
+
+2002-01-27  Koichi INOUE  <inoue@argv.org>
+
+	* ssmain.cpp, context.cpp, outloudfunc.cpp, dtfunc.cpp:
+	Initialization of engines is processed during startup (not in
+	engines' thread. Now we can track failed startup of engines and
+	cleanly shutdown.
+
+2002-01-27  KIRIAKE Masanori  <seiken@ARGV.org>
+
+	* outloudfunc.cpp(Translate()): Support split_caps command.
+
+2002-01-27  Koichi INOUE  <inoue@argv.org>
+
+	* ssqueue.h(ssqueue::push_text()): Added new argument.
+	Reordered the arguments.
+	* context.h: Added members and access method of allcaps_beep,
+	split_caps, capitalize, to handle these SS parameters.
+	* context.cpp, ssqueue.cpp, tts.h: Ditto.
+
+2002-01-23  Koichi INOUE  <inoue@argv.org>
+
+	* cmdproc.cpp, cmdproc.h, ssmain.cpp: New command
+	`tts_sync_state'.
+	which set some buffer-local speech parameters at once,
+	e.g. punctuation, capitalization, speech-rate e.t.c.
+	No implementation for allcaps-beep, capitalization, split-caps yet.
+
+2002-01-21  Koichi INOUE  <inoue@argv.org>
+
+	* context, ssmain, cmdproc, ssdefs.h: Recognizes the command
+	tts_set_character_scale.
+
+2002-01-19  Koichi INOUE  <inoue@argv.org>
+
+	* outloud.h, outloudfunc.cpp: new function: replace_reading().
+	Replaces some symbols to pronounciations.
+
+2002-01-18  KIRIAKE Masanori  <seiken@ARGV.org>
+
+	* outloudfunc.cpp, outloud.h: new function ChkErr(): Check ECI
+	internal error.
+
+	* outloud.h, outloudfunc.cpp: Now recognize in-text-command.
+
+2002-01-16  Koichi INOUE  <inoue@argv.org>
+
+	* dtfunc.cpp, dt.h(replace_reading()): Read '@' as "at"
+	and a serious bug about Japanese SJI string is fixed.
+
+2002-01-15  KIRIAKE Masanori  <seiken@mei.ARGV.org>
+
+	* doutloud.h, outloudfunc.cpp: Now working Outloud speech
+	synth. 'ss1' can speak english and japanese.
+
+202-01-13  Koichi INOUE  <inoue@argv.org>
+
+	* dsp.h, dsp.cpp: Added forgotten initialization after reset().
+	Made device locking more complete. Now every activity for fd is
+	locked and synchronized each other. It *may* work on FreeBSD and
+	Linux's SB Live!
+
+2002-01-06  Koichi INOUE  <inoue@argv.org>
+
+	* dtfunc.cpp: Speech output of the ascii symbols like (, ), ', "
+	are controled in dTalkParam engine. We search these symbols and
+	replace it with corresponding katakana string in the method
+	replace_reading().
+	* dt.h: New method declaration and string constant definition.
+
+2002-01-01  Koichi INOUE  <inoue@localhost.localdomain>
+
+	* dtfunc.cpp, dt.h: dTalkParam constructor doesn't take DtVoice as
+	argument anymore.
+
+2002-01-02  KIRIAKE Masanori  <seiken@ARGV.org>
+
+	* Makefile: clean target ignore error from "rm" command.
+
+	* ssmain.cpp dtfunc.cpp outloudfunc.cpp:
+	Redefine log_error().
+
+2001-11-29  Koichi INOUE  <inoue@argv.org>
+
+	* kanjifn.cpp(kanjifn.cpp): Correctly FAIL if there are two S'es
+	and the next character is not acceptable.
+
+2001-11-26  Koichi INOUE  <inoue@argv.org>
+
+	* context.cpp: Enabled tone generation.
+	Please test if this implementation is useful.
+
+	* dtfunc.cpp, dsp.cpp: Here comes New sun rise of the Linux Speech Server!!
+	Response of `immediate stop' function is
+	improved significantly. Now works witn newer devices and drivers,
+	stops very quickly.
+	The essense was: we need to call close() right after reset() on
+	the dsp device. C-e s now closes dsp device.
+
+2001-11-25  Koichi INOUE  <inoue@localhost.localdomain>
+
+	* You (engine writer) should call dsp->clearLock(this) in
+	setStatus(false) function. And you should *not* call releaseLock()
+	when speech is `stop'ed. If you call releaseLock() after
+	clearLock(this), your engine thread will lock up because no
+	reservation is remained.
+
+	* dsp.cpp, dsp.h: New locking function: clearLock(obj).
+	This function removes all entries whose `content' pointer is
+	`obj' from reservation queue `lockSeq'. It doesn't remove other entries.
+	* dtfunc.cpp: Use clearLock() when stop request is sent.
+	setStatus() function clears request queue `q' and reservation in
+	`dsp'. This change eliminates a bug to fail releasing reservation
+	in `dsp', especially when speech is `stop'ed.
+
+2001-11-21  Koichi INOUE  <inoue@localhost.localdomain>
+
+	* dsp.cpp, dsp.h(releaseLock()): Now releaseLock() also takes `this'
+	pointer as an argument. Otherwise it mistakenly release other
+	engine's reservation.
+	* dtfunc.cpp(): As above.
+
+	* dtfunc.cpp(dt_init()): When initialized as an English engine,
+	set default voice female and set high tone enabled.
+	This is for demonstration and debugging purpose.
+
+2001-11-19  Koichi INOUE  <inoue@argv.org>
+
+	* config.h.in, ssdefs.h: Changed default sample rate to 11050.
+	Because ViaVoice Outloud generates only 11050 Hz PCM.
+
+	* dsp.cpp, dsp.h: New locking facility.
+	It is consisted of three functions: reserveLock(), waitLock(),
+	releaseLock().
+	reserveLock() reserves the place for the engine in DSP speeking
+	sequence.
+	waitLock() waits until it is my (calling engine's) turn.
+	releaseLock() should be called after the engine can give the place
+	to subsequent engine(when speech is stopped or done).
+	Reference is dt_speak() :-p
+
+	* queue.cpp, queue.h: New function clear_without_content().
+	It will be useful when you want to clear queue but you don't want
+	it to destroy the object pointed by `content' pointers.
+
+2001-11-18  Koichi INOUE  <inoue@argv.org>
+
+	* tts.h, dt.h, dtfunc.cpp: iSpeedOffset if new variable.
+	If this value is used to adjust speed of each engine individually
+	by adding this value to the iSpeed value they are given.
+	Some functions will added to set this value by TTS command.
+	iSpeedFactor is specific to engine so it was moved to dt.h.
+	It must be easy to change the speed of each engine by adding some
+	value to default TTS speed(WPM).
+
+	* tts.h, dt.h: iSpeedOffset and dsp members are now protected.
+
+	* context.cpp, context.h: Some change to make the `t' command
+	work.
+	It seems to be difficult without making other thread umm...
+
+	* context.cpp(set_language()): 
+	Added fallback process. If TTS of specified language is not
+	present, does nothing. It does not care whether the current TTS
+	can speech new input.
+
+	* cmdproc.cpp(cmd_tts_set_language()):
+	Bug fixed. It works now.
+
+2001-11-17  Koichi INOUE  <inoue@argv.org>
+
+	* ssmain.cpp(main()): support for tts_set_language. Currently, if
+	language other than "ja" is selected, program will die with
+	segfault; some fallback is needed in ssContext::speak().
+
+	* cmdproc.*, context.*: tts_set_language command is implemented as
+	cmd_* function.
+
+2001-11-16  Koichi INOUE  <inoue@argv.org>
+
+	* dtvoice.h, dtvoice.cpp: Renamed from voice.cpp, voice.h.
+	because they are DTalker specific.
+	* voice.h, voice.cpp: removed.
+
+2001-11-12  Koichi INOUE  <inoue@argv.org>
+
+	* ssfunc.cpp, spcrsv.h, dtfunc.cpp(ssSkipPcm()):
+	Experimental function to make speech output faster.
+	It is called in dt_speak(), but it is commented out now, because
+	sound generated by it is not acceptable.
+	If you use it, be careful that SS_SKIP_FRAME_SIZE*unit*2 should be
+	less than SS_PCMSIZE(currently 2048).
+
+2001-11-09  Koichi INOUE  <inoue@argv.org>
+
+	* tts.h, dtfunc.cpp: mMoved member functions of ssRequest tto
+	tts.h. It should be shared by all engines.
+
+2001-11-08  Koichi INOUE  <inoue@argv.org>
+
+	* dsp.h, dsp.cpp, dtfunc.cpp: Now engine gets an exclusive lock of
+	DSP device object.
+	The lock should be released when all text are spoken or canceled.
+	See getLock() and releaseLock().  getLock() waits while the device
+	is locked. releaseLock() unlock the lock and send signal to
+	waiting engines.
+
+
+2001-10-29  Koichi INOUE  <inoue@argv.org>
+
+	* dtfunc.cpp: Now eng-kana dictionary path is read from the
+	environment variable BEP_DIC_PATH rather than LSS_ENG_KANA_DIC.
+	This may change soon again.
+
+2001-10-15  Koichi INOUE  <inoue@argv.org>
+
+	* kanjifn.h(macro iszenalpha): Fixed.
+
+2001-10-14  Koichi INOUE  <inoue@argv.org>
+
+	* dtfunc.cpp, kanjifn.h: Excluded numeric characters from the
+	deffinition of English words. Now reads 'emacs21' correctly, but
+	no words including numbers are not acceptable as eng to kana
+	dictionary entries.(No error but no effect). 
+
+2001-10-13  Koichi INOUE  <inoue@argv.org>
+
+	* dic.cpp, dic.h(dicUnloadDictionary(), dicFreeRecords()):
+	Cleanup functions for Dictionary structure.
+	* dtfunc.cpp: Dictionary is cleaned up when the thread exits.
+
+2001-10-06  Koichi INOUE  <inoue@argv.org>
+
+	* kanjifn.cpp, kanjifn.h: Romaji to Kana transfer improved.
+	* dt.h, dtfunc.cpp, Can specify bep-eng.dic path with
+	LSS_ENG_KANA_DIC Environment variable.
+	* ssdefs.h, dt.h: Better macro classification. DT_* is in dt.h.
+
+2001-09-30  Koichi INOUE  <inoue@argv.org>
+
+	* kanjifn.cp, kanjifn.h(jpRomaToKana()): Romaji transfer
+	routine by N. Nakamura. Now Linux SS can read Romaji string.
+	Romaji string shorter than 4 characters is not recognized as
+	romaji.
+
+2001-09-29  Koichi INOUE  <inoue@argv.org>
+
+	* tts.h: New class tts_engine.
+	* dtfunc.cpp, dt.h: dTalkParam class is now derived from
+	tts_engine.
+	* context.cpp, context.h: Uses tts_engine class pointer
+	rather than dTalkParam.
+
+	* bep-eng.dic: R. Takahashi edition is imported.
+	More words and less errors.
+	The second field of dictionary is now written in jis-x0201
+	kana(hankaku kana), so that the dictionary is completely
+	upper compatible with GrassRoots.
+	* dic.cpp(dicLoadDictionary()): The last field of dictionary
+	(the word can consist other word or not) is now works as intended.
+	
+2001-09-27  Koichi INOUE  <inoue@localhost.localdomain>
+
+	* kanjifn.cpp(jpEngToKana()): Fixed a small but
+	serious bug related to output buffer size calculation.
+	Speech Server now became more stable!
+	
+2001-09-26  Koichi INOUE  <inoue@localhost.localdomain>
+
+	* cmdproc.*, context.*, ssmain.cpp: hack to support 't' command.
+	Not complete. It might need some design the same as adding a new tts
+	engine.
+	ssdefs.h: Changed PCM buffer size to 2048. Is it work?
+
+2001-09-25  Koichi INOUE  <inoue@localhost.localdomain>
+
+	* ssqueue.cpp, ssqueue.h, queue.h, queue.cpp:
+	made the structure clean. these class are now very similar.
+	* dtfunc.cpp: did a lot for inprovement of thread mechanism.
+	* ss1: Now it became more robust than the released one.
+	It also includes new thread model, consideration for
+	multilingual enhancement.
+	Esound support are currently not implemented.
+	Tone generator may be included soon.
+	
+2001-09-22  Koichi INOUE  <inoue@localhost.localdomain>
+
+	* ssqueue.cpp, ssqueue.h:
+	Added new arguments to push_text() to pass language,
+	speed and punctuation mode to ssRequest.
+	It will be better to use generic queue class and
+	pass these paramaters packed in ssRequest.
+
+2001-09-22  Koichi INOUE  <inoue@localhost.localdomain>
+
+	* dt.h:
+	Added a member `punctuation' to the class ssRequest.
+
+2001-09-22  Koichi INOUE  <inoue@localhost.localdomain>
+
+	* context.cpp, context.h:
+	Stores language, speed, and punctuation mode in class ssContext
+	and push it into queue. Method to set them is added.
+
+2001-09-22  Koichi INOUE  <inoue@localhost.localdomain>
+
+	* ssqueue.h, ssqueue.cpp, context.h, context.cpp, 
+	dtfunc.cpp, dt.h, ssdefs.h, queue.cpp, queue.h:
+	Constructed the new ssContext system. Which is the core of
+	Speech Server and controls every engines.
+	ssContext::speak() method pops the queue content and push it
+	to each engine according to the `lang' member of the request.
+
+2001-09-21  Koichi INOUE  <inoue@localhost.localdomain>
+
+	* dtfunc.cpp, dt.h: Added queue as a member of dTalkParam.
+
+2001-09-20  Koichi INOUE  <inoue@localhost.localdomain>
+
+	* queue.cpp, queue.h: New simpler queue class. (It would be good
+	to use queue STL class) though.
+
+2001-09-17  Koichi INOUE  <inoue@localhost.localdomain>
+
+	* /home/BEP/CVSROOT/LinuxSpeechServer/dt.h:
+	dt.h: Use string class in ssRequest.
+
+2001-09-17  Koichi INOUE  <inoue@localhost.localdomain>
+
+	* /home/BEP/CVSROOT/LinuxSpeechServer/ssqueue.h: ssqueue.h: simplified.
+
+2001-09-16  Koichi INOUE  <inoue@localhost.localdomain>
+
+	* /home/BEP/CVSROOT/LinuxSpeechServer/dt.h:
+	dt.h: start(), shutdown(), dipatchRequest().
+
+2001-09-16  Koichi INOUE  <inoue@localhost.localdomain>
+
+	* /home/BEP/CVSROOT/LinuxSpeechServer/dtfunc.cpp:
+	dtfunc.cpp: Changing thread model. start(), shutdown(),
+	dispatchRequest().
+
+2001-09-16  Koichi INOUE  <inoue@localhost.localdomain>
+
+	* /home/BEP/CVSROOT/LinuxSpeechServer/context.h:
+	context.h: Added start(), shutdown().
+
+2001-09-16  Koichi INOUE  <inoue@localhost.localdomain>
+
+	* /home/BEP/CVSROOT/LinuxSpeechServer/context.cpp:
+	context.cpp: Added start(), shutdown().
+
+2001-09-12  Koichi INOUE  <inoue@localhost.localdomain>
+
+	* /home/BEP/CVSROOT/LinuxSpeechServer/context.cpp:
+	context.cpp(stop()): Call setStatus() in ss.
+
+2001-09-12  Koichi INOUE  <inoue@localhost.localdomain>
+
+	* /home/BEP/CVSROOT/LinuxSpeechServer/dt.h:
+	dt.h(status, setStatus(), getStatus()): New member.
+
+2001-09-12  Koichi INOUE  <inoue@localhost.localdomain>
+
+	* /home/BEP/CVSROOT/LinuxSpeechServer/dtfunc.cpp:
+	dtfunc.cpp(dTalkParam::dTalkParam()): Constructor argument changed.
+	             Don't use function pointers.
+	          (setStatus(), getStatus()): Perform locking and change status
+	             safely. Called by ssContext::stop().
+
+2001-09-10  Koichi INOUE  <inoue@localhost.localdomain>
+
+	* /home/BEP/CVSROOT/LinuxSpeechServer/dtfunc.cpp:
+	dtfunc.cpp: ssSharedInfo structure removed.
+
+	* /home/BEP/CVSROOT/LinuxSpeechServer/dtfunc.cpp:
+	dtfunc.cpp: Started to change class structure. It doesn't work
+	temporarily.
+
+2001-09-10  Koichi INOUE  <inoue@localhost.localdomain>
+
+	* /home/BEP/CVSROOT/LinuxSpeechServer/spcsrv.h:
+	spcsrv.h: Moved some definition:
+	     ssWorkArg to dt.h, dt_*(): to dTalkParam class(dt.h).
+	     ssSharedInfo: deleted.
+
+2001-09-10  Koichi INOUE  <inoue@localhost.localdomain>
+
+	* /home/BEP/CVSROOT/LinuxSpeechServer/dt.h:
+	dt.h: Started to change the class structure. It doesn't work
+	temporarily.
+
+2001-09-10  Koichi INOUE  <inoue@localhost.localdomain>
+
+	* /home/BEP/CVSROOT/LinuxSpeechServer/dtfunc.cpp:
+	dtfunc.cpp: ssSharedInfo structure removed.
+
+	* /home/BEP/CVSROOT/LinuxSpeechServer/dtfunc.cpp:
+	dtfunc.cpp: Started to change class structure. It doesn't work
+	temporarily.
+
+2001-09-09  Koichi INOUE  <inoue@localhost.localdomain>
+
+	* /home/BEP/CVSROOT/LinuxSpeechServer/soundgen.cpp:
+	soundgen.cpp: New file. Implements sign wave generator.
+
+	* /home/BEP/CVSROOT/LinuxSpeechServer/soundgen.h:
+	soundgen.h: New file. Defines soundGenerator class.
+
+	* /home/BEP/CVSROOT/LinuxSpeechServer/dsp.cpp: dsp.cpp: Fix of typo.
+
+2001-09-08  Koichi INOUE  <inoue@localhost.localdomain>
+
+	* /home/BEP/CVSROOT/LinuxSpeechServer/ssdefs.h:
+	ssdefs.h: Added SS_STAT_* macros.
+
+	* /home/BEP/CVSROOT/LinuxSpeechServer/context.h:
+	context.h(isStop()): Changed from stop().
+
+	* /home/BEP/CVSROOT/LinuxSpeechServer/context.cpp:
+	context.cpp: New file. Implements ssContext class.
+
+	* /home/BEP/CVSROOT/LinuxSpeechServer/dsp.cpp:
+	dsp.cpp(~ssDspDevice()): Close fd when destructed.
+	       (close()): set fd to -1 after close().
+
+	* /home/BEP/CVSROOT/LinuxSpeechServer/context.cpp:
+	context.cpp: New file. Implements ssContext class.
+
+	* /home/BEP/CVSROOT/LinuxSpeechServer/dsp.cpp:
+	dsp.cpp: Added missing include of stdio.h.
+
+	* /home/BEP/CVSROOT/LinuxSpeechServer/dsp.cpp:
+	dsp.cpp: New file. Represents sound output device.
+
+	* /home/BEP/CVSROOT/LinuxSpeechServer/context.h:
+	context.h: New file. Defines ssContext class.
+
+	* /home/BEP/CVSROOT/LinuxSpeechServer/dsp.h:
+	dsp.h: New file. Represents sound output device. Its implementation
+	       is dsp.cpp.
+
+2001-09-04  Koichi INOUE  <inoue@argv.org>
+
+	* /home/BEP/CVSROOT/LinuxSpeechServer/dtfunc.cpp:
+	dtfunc.cpp(dt_speak()): Added cast to `delete wArg' to avoid warnings.
+
+2001-09-02  Koichi INOUE  <inoue@argv.org>
+
+	* /home/BEP/CVSROOT/LinuxSpeechServer/dtfunc.cpp:
+	dtfunc.cpp(dt_speak): If called l{} command, speaks Katakana with higher voice.
+
+2001-09-02  Koichi INOUE  <inoue@localhost.localdomain>
+
+	* /home/BEP/CVSROOT/LinuxSpeechServer/dtfunc.cpp:
+	dtfunc.cpp(dt_speak): If called l{} command, speaks Katakana with higher voice.
+
+2001-09-02  Koichi INOUE  <inoue@localhost.localdomain>
+
+	* /home/BEP/CVSROOT/LinuxSpeechServer/kanjifn.h:
+	kanjifn.h(iskatakana): New inline macro function.
+
+2001-08-23  Koichi INOUE  <inoue@argv.org>
+
+	* /home/BEP/CVSROOT/LinuxSpeechServer/dtfunc.cpp, /home/BEP/CVSROOT/LinuxSpeechServer/ssdefs.h, /home/BEP/CVSROOT/LinuxSpeechServer/ssmain.cpp, /home/BEP/CVSROOT/LinuxSpeechServer/voice.cpp, /home/BEP/CVSROOT/LinuxSpeechServer/voice.h, /home/BEP/CVSROOT/LinuxSpeechServer/cmdproc.cpp, /home/BEP/CVSROOT/LinuxSpeechServer/dt.h:
+	dtfunc.cpp, voice.cpp, voice.h, dt.h, spcsrv.h, ssdefs.h, ssmain.cpp, cmdproc.cpp:
+	Changed structure of voice information to enable capitalization.
+	 Modified Files:
+	  Tag: lss-yonaoshi
+	 	cmdproc.cpp dt.h dtfunc.cpp ssdefs.h ssmain.cpp voice.cpp
+	 	voice.h
+
+2001-07-28  Koichi INOUE  <inoue@argv.org>
+
+	* /home/BEP/CVSROOT/LinuxSpeechServer/cmdproc.cpp, /home/BEP/CVSROOT/LinuxSpeechServer/dt.h, /home/BEP/CVSROOT/LinuxSpeechServer/dtfunc.cpp, /home/BEP/CVSROOT/LinuxSpeechServer/spcsrv.h, /home/BEP/CVSROOT/LinuxSpeechServer/ssqueue.cpp, /home/BEP/CVSROOT/LinuxSpeechServer/ssqueue.h:
+	Work of reconstruction is in progress.
+	No functional changes yet.
+	 Modified Files:
+	  Tag: lss-yonaoshi
+	 	cmdproc.cpp dt.h dtfunc.cpp spcsrv.h ssqueue.cpp ssqueue.h
+
+2001-07-22  Koichi INOUE  <inoue@argv.org>
+
+	* /home/BEP/CVSROOT/LinuxSpeechServer/Makefile, /home/BEP/CVSROOT/LinuxSpeechServer/dtfunc.cpp, /home/BEP/CVSROOT/LinuxSpeechServer/ssqueue.h, /home/BEP/CVSROOT/LinuxSpeechServer/voice.cpp, /home/BEP/CVSROOT/LinuxSpeechServer/voice.h:
+	dtfunc.cpp: slight format changes.
+	ssqueue.cpp: format changes.
+	voice.cpp, voice.h: uses thread_ctl class(experimental).
+
+	* /home/BEP/CVSROOT/LinuxSpeechServer/control.cpp:
+	control.cpp: rewrite.
+
+	* /home/BEP/CVSROOT/LinuxSpeechServer/control.h: control.h: rewrite.
+
+	* /home/BEP/CVSROOT/LinuxSpeechServer/control.cpp:
+	*** empty log message ***
+
+	* /home/BEP/CVSROOT/LinuxSpeechServer/control.cpp: New file.
+
+	* /home/BEP/CVSROOT/LinuxSpeechServer/control.cpp:
+	control.cpp: new file.
+	 Added Files:
+	  Tag: lss-yonaoshi
+	 	control.cpp
+
+2001-07-21  Koichi INOUE  <inoue@argv.org>
+
+	* /home/BEP/CVSROOT/LinuxSpeechServer/control.h: New file.
+
+	* /home/BEP/CVSROOT/LinuxSpeechServer/control.h:
+	control.h: new file. Code by Daniel Robbins. (needs rewriting
+	afterwards?).
+
+	* /home/BEP/CVSROOT/LinuxSpeechServer/voice.h: New file.
+
+	* /home/BEP/CVSROOT/LinuxSpeechServer/voice.h:
+	added new files: voice.cpp voice.h dt.h ssdefs.h
+	 Modified Files:
+	  Tag: lss-yonaoshi
+	 	kanjifn.h
+	 Added Files:
+	  Tag: lss-yonaoshi
+	 	dt.h ssdefs.h voice.cpp voice.h
+
+	* /home/BEP/CVSROOT/LinuxSpeechServer/dt.h, /home/BEP/CVSROOT/LinuxSpeechServer/ssdefs.h, /home/BEP/CVSROOT/LinuxSpeechServer/voice.cpp:
+	New file.
+
+	* /home/BEP/CVSROOT/LinuxSpeechServer/dt.h, /home/BEP/CVSROOT/LinuxSpeechServer/ssdefs.h, /home/BEP/CVSROOT/LinuxSpeechServer/voice.cpp:
+	added new files: voice.cpp voice.h dt.h ssdefs.h
+	 Modified Files:
+	  Tag: lss-yonaoshi
+	 	kanjifn.h
+	 Added Files:
+	  Tag: lss-yonaoshi
+	 	dt.h ssdefs.h voice.cpp voice.h
+
+	* /home/BEP/CVSROOT/LinuxSpeechServer/ssmain.cpp, /home/BEP/CVSROOT/LinuxSpeechServer/ssqueue.cpp, /home/BEP/CVSROOT/LinuxSpeechServer/Makefile, /home/BEP/CVSROOT/LinuxSpeechServer/cmdproc.cpp, /home/BEP/CVSROOT/LinuxSpeechServer/dtfunc.cpp, /home/BEP/CVSROOT/LinuxSpeechServer/kanjifn.cpp, /home/BEP/CVSROOT/LinuxSpeechServer/spcsrv.h, /home/BEP/CVSROOT/LinuxSpeechServer/ssfunc.cpp:
+	voicecpp: new file.
+	whoe structure: start to divide functions to files.
+		currently spcsrv.h and ssfunc.cpp, dtfunc.cpp includes
+		various kind of functions and hard to read.
+		 No functional changes(possibly)
+	 Modified Files:
+	  Tag: lss-yonaoshi
+	 	Makefile cmdproc.cpp dtfunc.cpp kanjifn.cpp kanjifn.h spcsrv.h
+	 	ssfunc.cpp ssmain.cpp ssqueue.cpp
+
+	* /home/BEP/CVSROOT/LinuxSpeechServer/dtfunc.cpp:
+	dtfunc.cpp(includes): surrounded esd.h include by #if conditional.
+
+2001-07-16  seiken  <seiken@windy>
+
+	* /home/BEP/CVSROOT/LinuxSpeechServer/Makefile: Cancel 1.10.
+
+	* /home/BEP/CVSROOT/LinuxSpeechServer/Makefile:
+	removing config.h when "make clean".
+	 Modified Files:
+	 	Makefile
+
+2001-07-07  Koichi INOUE  <inoue@argv.org>
+
+	* /home/BEP/CVSROOT/LinuxSpeechServer/dtfunc.cpp:
+	dtfunc.cpp(dt_speak): ignore if dt_lang_anal() set NULL pointer.(it means no phonetic output).
+	 Modified Files:
+	 	dtfunc.cpp
+
+2001-05-22  Koichi INOUE  <inoue@argv.org>
+
+	* /home/BEP/CVSROOT/LinuxSpeechServer/ssfunc.cpp:
+	ssfunc.cpp(read_input): trivial bug.
+
+2001-05-20  Koichi INOUE  <inoue@argv.org>
+
+	* /home/BEP/CVSROOT/LinuxSpeechServer/bep-eng.dic:
+	bep-eng.dic: fixed some conversion errors and synched up to
+	      GR 5.32.
+	Modified Files:
+	 	bep-eng.dic
+
+2001-03-27  Koichi INOUE  <inoue@argv.org>
+
+	* /home/BEP/CVSROOT/LinuxSpeechServer/config.h.in:
+	config.h.in: Now ESD support is not default.
+	 Modified Files:
+	 	config.h.in
+
+	* /home/BEP/CVSROOT/LinuxSpeechServer/Makefile, /home/BEP/CVSROOT/LinuxSpeechServer/dtfunc.cpp, /home/BEP/CVSROOT/LinuxSpeechServer/ssmain.cpp:
+	VoiceSet::~VoiceSet(): fixed segfault while returning from main().
+	 Modified Files:
+	 	Makefile dtfunc.cpp ssmain.cpp
+
+	* /home/BEP/CVSROOT/LinuxSpeechServer/Makefile:
+	Makefile: added linker line without -lesd option.
+	 Modified Files:
+	 	Makefile
+
+	* /home/BEP/CVSROOT/LinuxSpeechServer/ssmain.cpp:
+	ssmain.cpp: fixed debug switches.
+
+2001-02-16  Koichi INOUE  <inoue@argv.org>
+
+	* /home/BEP/CVSROOT/LinuxSpeechServer/dtfunc.cpp:
+	dt_stop(): wait after unlocking mutex.
+	 Modified Files:
+	 	dtfunc.cpp
+
+2001-01-25  Koichi INOUE  <inoue@argv.org>
+
+	* /home/BEP/CVSROOT/LinuxSpeechServer/cmdproc.cpp, /home/BEP/CVSROOT/LinuxSpeechServer/dtfunc.cpp, /home/BEP/CVSROOT/LinuxSpeechServer/spcsrv.h, /home/BEP/CVSROOT/LinuxSpeechServer/ssmain.cpp, /home/BEP/CVSROOT/LinuxSpeechServer/ssqueue.cpp:
+	major enhancement: q command now reads multiple lines.
+	others: some changes trying to eliminate segfault and lockup.(no sense)
+	 Modified Files:
+	 	cmdproc.cpp dtfunc.cpp spcsrv.h ssmain.cpp ssqueue.cpp
+
+2001-01-14  Koichi INOUE  <inoue@argv.org>
+
+	* /home/BEP/CVSROOT/LinuxSpeechServer/dtfunc.cpp, /home/BEP/CVSROOT/LinuxSpeechServer/kanjifn.cpp, /home/BEP/CVSROOT/LinuxSpeechServer/kanjifn.h, /home/BEP/CVSROOT/LinuxSpeechServer/spcsrv.h, /home/BEP/CVSROOT/LinuxSpeechServer/ssfunc.cpp, /home/BEP/CVSROOT/LinuxSpeechServer/ssmain.cpp, /home/BEP/CVSROOT/LinuxSpeechServer/ssqueue.cpp, /home/BEP/CVSROOT/LinuxSpeechServer/ssqueue.h, /home/BEP/CVSROOT/LinuxSpeechServer/cmdproc.cpp, /home/BEP/CVSROOT/LinuxSpeechServer/cmdproc.h, /home/BEP/CVSROOT/LinuxSpeechServer/config.h, /home/BEP/CVSROOT/LinuxSpeechServer/config.h.in, /home/BEP/CVSROOT/LinuxSpeechServer/dic.cpp, /home/BEP/CVSROOT/LinuxSpeechServer/dic.h, /home/BEP/CVSROOT/LinuxSpeechServer/Makefile, /home/BEP/CVSROOT/LinuxSpeechServer/README, /home/BEP/CVSROOT/LinuxSpeechServer/bep-eng.dic:
+	added copyright information.
+	 Modified Files:
+	 	Makefile README bep-eng.dic cmdproc.cpp cmdproc.h dic.cpp
+	 	dic.h dtfunc.cpp kanjifn.cpp kanjifn.h spcsrv.h ssfunc.cpp
+	 	ssmain.cpp ssqueue.cpp ssqueue.h
+	 Added Files:
+	 	config.h.in
+	 Removed Files:
+	 	config.h
+
+2000-12-13  Koichi INOUE  <inoue@argv.org>
+
+	* /home/BEP/CVSROOT/LinuxSpeechServer/README, /home/BEP/CVSROOT/LinuxSpeechServer/config.h, /home/BEP/CVSROOT/LinuxSpeechServer/dtfunc.cpp:
+	config.h, dtfunc.cpp, README: catch up with newer DTalker SDK.
+	Changed default location of dictionaries and header files.
+	 Modified Files:
+	 	README config.h dtfunc.cpp
+
+2000-12-06  Koichi INOUE  <inoue@argv.org>
+
+	* /home/BEP/CVSROOT/LinuxSpeechServer/dtfunc.cpp, /home/BEP/CVSROOT/LinuxSpeechServer/ssmain.cpp:
+	dtfunc.cpp: dt_speak(): don't skip space after numbers.
+	 Modified Files:
+	 	dtfunc.cpp ssmain.cpp
+
+2000-11-26  Koichi INOUE  <inoue@argv.org>
+
+	* /home/BEP/CVSROOT/LinuxSpeechServer/kanjifn.cpp:
+	jpEngToKana(): don't use word ending rules if the postfix string is entire the word.
+	 Modified Files:
+	 	kanjifn.cpp
+
+	* /home/BEP/CVSROOT/LinuxSpeechServer/dtfunc.cpp, /home/BEP/CVSROOT/LinuxSpeechServer/kanjifn.cpp, /home/BEP/CVSROOT/LinuxSpeechServer/ssqueue.cpp:
+	jpEngToKana(): Added new feature: treat well-known ending forms of words automatically.
+	 Modified Files:
+	 	dtfunc.cpp kanjifn.cpp ssqueue.cpp
+
+	* /home/BEP/CVSROOT/LinuxSpeechServer/config.h, /home/BEP/CVSROOT/LinuxSpeechServer/dic.cpp, /home/BEP/CVSROOT/LinuxSpeechServer/dtfunc.cpp, /home/BEP/CVSROOT/LinuxSpeechServer/kanjifn.cpp, /home/BEP/CVSROOT/LinuxSpeechServer/spcsrv.h, /home/BEP/CVSROOT/LinuxSpeechServer/ssfunc.cpp, /home/BEP/CVSROOT/LinuxSpeechServer/ssmain.cpp, /home/BEP/CVSROOT/LinuxSpeechServer/ssqueue.cpp, /home/BEP/CVSROOT/LinuxSpeechServer/Makefile, /home/BEP/CVSROOT/LinuxSpeechServer/bep-eng.dic:
+	Fixed for workaround the sudden core dump.
+	Fixed English matching algorithm also.
+	 Modified Files:
+	 	Makefile bep-eng.dic config.h dic.cpp dtfunc.cpp kanjifn.cpp
+	 	spcsrv.h ssfunc.cpp ssmain.cpp ssqueue.cpp
+
+2000-11-23  watanabe  <watanabe@windy>
+
+	* /home/BEP/CVSROOT/LinuxSpeechServer/kanjifn.cpp: fix bug
+	 Modified Files:
+	 	kanjifn.cpp
+
+	* /home/BEP/CVSROOT/LinuxSpeechServer/dic.cpp: Added dic.cpp
+	 Added Files:
+	 dic.cpp
+
+2000-11-22  Koichi INOUE  <inoue@argv.org>
+
+	* /home/BEP/CVSROOT/LinuxSpeechServer/cmdproc.cpp, /home/BEP/CVSROOT/LinuxSpeechServer/config.h, /home/BEP/CVSROOT/LinuxSpeechServer/dic.h, /home/BEP/CVSROOT/LinuxSpeechServer/dtfunc.cpp, /home/BEP/CVSROOT/LinuxSpeechServer/kanjifn.cpp, /home/BEP/CVSROOT/LinuxSpeechServer/kanjifn.h, /home/BEP/CVSROOT/LinuxSpeechServer/spcsrv.h, /home/BEP/CVSROOT/LinuxSpeechServer/ssfunc.cpp, /home/BEP/CVSROOT/LinuxSpeechServer/ssmain.cpp, /home/BEP/CVSROOT/LinuxSpeechServer/ssqueue.cpp, /home/BEP/CVSROOT/LinuxSpeechServer/Makefile, /home/BEP/CVSROOT/LinuxSpeechServer/README, /home/BEP/CVSROOT/LinuxSpeechServer/bep-eng.dic:
+	Enhancement of English pronounciation by dtalker.
+	 Modified Files:
+	 	Makefile README cmdproc.cpp config.h dtfunc.cpp kanjifn.h
+	 	spcsrv.h ssfunc.cpp ssmain.cpp ssqueue.cpp
+	 Added Files:
+	 	bep-eng.dic dic.h kanjifn.cpp
+
+2000-11-03  Koichi INOUE  <inoue@argv.org>
+
+	* /home/BEP/CVSROOT/LinuxSpeechServer/cmdproc.cpp:
+	cmd_unknown(): fixed bug.
+	 Modified Files:
+	 	cmdproc.cpp
+
+2000-11-02  Koichi INOUE  <inoue@argv.org>
+
+	* /home/BEP/CVSROOT/LinuxSpeechServer/spcsrv.h:
+	another fix for voiceSet::selectVoice().
+	 Modified Files:
+	 	spcsrv.h
+
+	* /home/BEP/CVSROOT/LinuxSpeechServer/dtfunc.cpp, /home/BEP/CVSROOT/LinuxSpeechServer/spcsrv.h:
+	VoiceSet::select(): changed to VoiceSet::selectVoice() to avoid conflict with select(2).
+	 Modified Files:
+	 	dtfunc.cpp spcsrv.h
+
+2000-10-30  Koichi INOUE  <inoue@argv.org>
+
+	* /home/BEP/CVSROOT/LinuxSpeechServer/config.h, /home/BEP/CVSROOT/LinuxSpeechServer/dtfunc.cpp, /home/BEP/CVSROOT/LinuxSpeechServer/spcsrv.h:
+	some changes.
+	 Modified Files:
+	 	config.h dtfunc.cpp spcsrv.h
+
+2000-10-22  Koichi INOUE  <inoue@argv.org>
+
+	* /home/BEP/CVSROOT/LinuxSpeechServer/config.h, /home/BEP/CVSROOT/LinuxSpeechServer/dtfunc.cpp, /home/BEP/CVSROOT/LinuxSpeechServer/spcsrv.h, /home/BEP/CVSROOT/LinuxSpeechServer/ssfunc.cpp:
+	Now ESD volume cut down is implemented. But a little noisy and
+	the next queue is processed to early.
+	 Modified Files:
+	 	config.h dtfunc.cpp spcsrv.h ssfunc.cpp
+
+	* /home/BEP/CVSROOT/LinuxSpeechServer/Makefile, /home/BEP/CVSROOT/LinuxSpeechServer/dtfunc.cpp, /home/BEP/CVSROOT/LinuxSpeechServer/spcsrv.h, /home/BEP/CVSROOT/LinuxSpeechServer/ssfunc.cpp:
+	commented out the use of pthread_mutexattr_settype() to avoid prototype error.
+	 Modified Files:
+	 	Makefile config.h dtfunc.cpp spcsrv.h ssfunc.cpp
+
+2000-10-16  Koichi INOUE  <inoue@argv.org>
+
+	* /home/BEP/CVSROOT/LinuxSpeechServer/spcsrv.h, /home/BEP/CVSROOT/LinuxSpeechServer/ssfunc.cpp, /home/BEP/CVSROOT/LinuxSpeechServer/Makefile, /home/BEP/CVSROOT/LinuxSpeechServer/config.h, /home/BEP/CVSROOT/LinuxSpeechServer/dtfunc.cpp:
+	Hack for esound support. currently disabled(config.h)
+	 Modified Files:
+	 	Makefile config.h dtfunc.cpp spcsrv.h ssfunc.cpp
+
+2000-09-05  Koichi INOUE  <inoue@argv.org>
+
+	* /home/BEP/CVSROOT/LinuxSpeechServer/dtfunc.cpp, /home/BEP/CVSROOT/LinuxSpeechServer/spcsrv.h, /home/BEP/CVSROOT/LinuxSpeechServer/ssfunc.cpp:
+	ssWarpPcm(): compress(and make fast) PCM data.
+	 Modified Files:
+	 	dtfunc.cpp spcsrv.h ssfunc.cpp
+
+2000-08-16  Koichi INOUE  <inoue@argv.org>
+
+	* /home/BEP/CVSROOT/LinuxSpeechServer/Makefile:
+	removed -L/usr/lib avoid linking error on FreeBSD.
+	 Modified Files:
+	 	Makefile
+
+2000-08-15  seiken  <seiken@windy>
+
+	* /home/BEP/CVSROOT/LinuxSpeechServer/ssmain.cpp:
+	log_error(): file open message fixed.
+	 Modified Files:
+	 	ssmain.cpp
+
+2000-08-15  Koichi INOUE  <inoue@argv.org>
+
+	* /home/BEP/CVSROOT/LinuxSpeechServer/ssmain.cpp:
+	log_error(): look at $HOME.
+	 Modified Files:
+	 	ssmain.cpp
+
+	* /home/BEP/CVSROOT/LinuxSpeechServer/cmdproc.cpp, /home/BEP/CVSROOT/LinuxSpeechServer/cmdproc.h, /home/BEP/CVSROOT/LinuxSpeechServer/dtfunc.cpp, /home/BEP/CVSROOT/LinuxSpeechServer/kanjifn.h, /home/BEP/CVSROOT/LinuxSpeechServer/spcsrv.h, /home/BEP/CVSROOT/LinuxSpeechServer/ssmain.cpp, /home/BEP/CVSROOT/LinuxSpeechServer/ssqueue.cpp, /home/BEP/CVSROOT/LinuxSpeechServer/ssqueue.h:
+	Added multivoice capability.
+	 Modified Files:
+	 	cmdproc.cpp cmdproc.h dtfunc.cpp kanjifn.h spcsrv.h ssmain.cpp
+	 	ssqueue.cpp ssqueue.h
+
+	* /home/BEP/CVSROOT/LinuxSpeechServer/dtfunc.cpp, /home/BEP/CVSROOT/LinuxSpeechServer/spcsrv.h, /home/BEP/CVSROOT/LinuxSpeechServer/ssqueue.cpp, /home/BEP/CVSROOT/LinuxSpeechServer/ssqueue.h:
+	dtfunc.c: improved stop response. Many changes is going.
+
+2000-08-13  Koichi INOUE  <inoue@argv.org>
+
+	* /home/BEP/CVSROOT/LinuxSpeechServer/ssqueue.h: New file.
+
+	* /home/BEP/CVSROOT/LinuxSpeechServer/ssqueue.h: Original Version
+
+	* /home/BEP/CVSROOT/LinuxSpeechServer/Makefile, /home/BEP/CVSROOT/LinuxSpeechServer/README, /home/BEP/CVSROOT/LinuxSpeechServer/config.h, /home/BEP/CVSROOT/LinuxSpeechServer/kanjifn.h, /home/BEP/CVSROOT/LinuxSpeechServer/ssfunc.cpp, /home/BEP/CVSROOT/LinuxSpeechServer/ssmain.cpp, /home/BEP/CVSROOT/LinuxSpeechServer/ssqueue.cpp:
+	New file.
+
+	* /home/BEP/CVSROOT/LinuxSpeechServer/Makefile, /home/BEP/CVSROOT/LinuxSpeechServer/README, /home/BEP/CVSROOT/LinuxSpeechServer/config.h, /home/BEP/CVSROOT/LinuxSpeechServer/kanjifn.h, /home/BEP/CVSROOT/LinuxSpeechServer/ssfunc.cpp, /home/BEP/CVSROOT/LinuxSpeechServer/ssmain.cpp, /home/BEP/CVSROOT/LinuxSpeechServer/ssqueue.cpp:
+	Original Version
+
+	* /home/BEP/CVSROOT/LinuxSpeechServer/dtfunc.cpp, /home/BEP/CVSROOT/LinuxSpeechServer/spcsrv.h:
+	New file.
+
+	* /home/BEP/CVSROOT/LinuxSpeechServer/dtfunc.cpp, /home/BEP/CVSROOT/LinuxSpeechServer/spcsrv.h:
+	Original Version
+
+	* /home/BEP/CVSROOT/LinuxSpeechServer/cmdproc.cpp, /home/BEP/CVSROOT/LinuxSpeechServer/cmdproc.h:
+	New file.
+
+	* /home/BEP/CVSROOT/LinuxSpeechServer/cmdproc.cpp, /home/BEP/CVSROOT/LinuxSpeechServer/cmdproc.h:
+	Original Version
+

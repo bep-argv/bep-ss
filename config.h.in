@@ -1,0 +1,51 @@
+/*
+** config.h.in --- configuration parameters
+**
+** Copyright (C) 2000, 2001 Bilingual Emacspeak Project <inoue@argv.org>
+**
+** Last modified: $Date: 2002/01/15 13:16:27 $ by $Author: inoue $
+** Keywords: Emacs, Emacspeak, speech, Linux
+**
+** This file is part of BEP (Bilingual Emacspeak Project) 
+** <http://www.argv.org/bep/>
+** This file is originally written by Gary Bishop, and modified by BEP
+** to make a bilingual, Japanese and English, DECTalk-like speech server 
+** running under Windows.
+**
+** This program is free software; you can redistribute it and/or modify
+** it under the terms of the GNU General Public License as published by
+** the Free Software Foundation; either version 2 of the License, or
+** (at your option) any later version.
+** 
+** This program is distributed in the hope that it will be useful,
+** but WITHOUT ANY WARRANTY; without even the implied warranty of
+** MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+** GNU General Public License for more details.
+** 
+** You should have received a copy of the GNU General Public License
+** along with this program; if not, write to the Free Software 
+** Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+*/
+#ifndef __CONFIG_H
+#define __CONFIG_H
+
+/* 利用する音声合成 */
+#define SS_DTALKER
+#define SS_OUTLOUD
+
+#if defined(SS_DTALKER)
+/* Dictionary Path */
+#define SS_DTALKER_DIC_DIR "/usr/local/lib/dtalker"
+#define SS_DTALKER_LNG_DIC "wd2k03.dic"
+#define SS_DTALKER_SYN_DIC "HIGH11.VSD"
+#define SS_ENG_KANA_DIC "bep-eng.dic"
+#endif /* SS_DTALKER */
+
+/* 音声出力用サウンドデバイス */
+#define SS_SYN_OUTPUT_DEVICE "/dev/dsp"
+#define SS_SYN_USE_ESD FALSE
+#define SS_SYN_ESD_HOST NULL
+#define SS_SYN_HOST_ENV "SPEECH_SERVER_HOST"
+#define SS_SYN_PROG_NAME "BEP_SPEECH_SERVER"
+/*#define WRITE_ELOG 1*/
+#endif

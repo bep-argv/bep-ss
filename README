@@ -1,0 +1,260 @@
+Bilingual Emacspeak Platform
+Linux用スピーチサーバ Ver2.2
+Copyright 1999-2002 Bilingual Emacspeak Project.　All rights reserved.
+Document by: Koichi INOUE <inoue@argv.org>
+Last modified:: $Date: 2002/07/19 14:20:32 $
+$Revision: 1.4.2.7 $
+
+目次
+
+0. 本パッケージについて
+1. はじめに
+2. 必要なもの
+2.1 ソフトウェア
+2.2 ハードウェア
+3. インストール方法
+3.1 インストールの準備
+3.2 コンパイルとインストール
+4. 動作テスト
+5. BEPの実行
+6. 特殊な利用法
+6.1 環境変数
+6.2 日本語/英語のみの利用
+7. 既知の不具合
+8. 配布条件
+9. 連絡先
+10. 謝辞
+
+
+
+0. 本パッケージについて
+
+本パッケージはBilingual Emacspeak Platform(以下BEP)をLinux上で利用するた
+めに必要です。以下の解説に従って導入してください。
+なお、日本語音声合成を利用するには別途、ライブラリ(2.1参照)を有料で購入
+していただく必要があります。
+
+
+1. はじめに
+
+本ソフトウェアはBilingual Emacspeak Platform(BEP)のためのスピーチサーバ
+です。スピーチサーバはEmacspeakとともに動作して、音声合成の制御を担当す
+るプログラムです。本パッケージはLinux(及び十分な互換環境)での利用を想定
+して作成されています。
+
+
+2. 必要なもの
+
+本ソフトウェアを利用するには、以下のものが必要です。
+
+2.1 ソフトウェア
+
+・英語カタカナ読み辞書
+  本パッケージにbep-eng.dicが含まれていない場合には、BEP(Linux)のWEBページ
+  http://www.argv.org/bep/Linux/
+  を参考にして英語カタカナ読み辞書をダウンロードしてください。
+
+・IBM VIAVOICE TTS RUN TIME KIT FOR LINUX(Version 5.0以上)
+  及びIBM ViaVoice Text-To-Speech Software Developer's Kit for Linux
+  (Version 5.0以上)
+  英語音声の合成に必要です。SDKは本ソフトウェアのコンパイル時に必要とな
+  ります。動作を確認しているバージョンは5.1-1.2です。
+  現在はEmacspeakでの利用のために以下からダウンロードすることができます。
+http://www.redhat.com/services/techsupport/accessibility/s1-access-install.html
+
+・Linux用音声合成ライブラリ
+  クリエートシステム開発株式会社が販売している日本語音声合成ライブラリが
+  必要です。
+  http://www.createsystem.co.jp/linux.html
+  からVectorのプロレジを通じて安価に購入できます。(￥4,800)
+
+2.2 ハードウェア
+
+・サウンドカード
+  PCMストリームを再生でき、お使いのカーネルまたはドライバがサポートして
+  いるサウンドカードが必要です。PCMを同時に多重再生可能なカード(Sound
+  Blaster Live!, YMF7xxなど)があれば、音声出力とEmacspeakの出す
+  auditory-iconの出力が同時に聞けるのでお勧めです。
+  注意:
+  ・オンボードで搭載されている一部チップでは音声の停止時に大きなノイズが入
+    るものがあります。
+  ・Sound Blaster Live!シリーズを利用される場合は、カーネル付属のドライバ
+    ではシステムがハングしたり、正しく発音されないことがあります。そのよ
+    うな場合はCreative Open Source
+    http://dxr2.sourceforge.net/
+    からドライバをダウンロードしてインストールされることをお勧めします。
+  ・ALSAドライバを利用する場合にはOSS互換モジュールが必要です。
+  ・esoundには対応していません。
+
+
+3. インストール方法
+
+3.1 インストールの準備
+
+まず、ViaVoice OutloudのRTK及びSDKをRPMから適当な方法でインストール
+します。
+
+# rpm -ivh ViaVoice_TTS_rtk-5.1-1.2.i386.rpm
+# rpm -ivh ViaVoice_TTS_sdk-5.1-1.2.i386.rpm
+
+rpmを実行したら/etc/profileに設定される環境変数を有効にするため、シェル
+を起動し直して(あるいはログインし直して)ください。
+その後、ViaVoice TTS付属のサンプルプログラム(cmdlinespeakfileなど)を利用
+して単体でしゃべることを確認してください。
+
+Red Hat系以外のディストリビューションでは特別な作業が必要になるかも知れ
+ません。特に、inigenユーティリティによるeci.iniの作成とECIINI環境変数の
+設定を手作業で行う必要があります。
+
+次に、日本語音声合成SDK(またはランタイム)に含まれるファイル群を以下のよ
+うにコピーします。
+
+・ディレクトリ/usr/local/lib/dtalker, /usr/local/include/dtalkerを作成
+・synch/lib/* → /usr/lib
+・synth/include/* → /usr/local/include/dtalker
+・synth/dic/* → /usr/local/lib/dtalker
+
+そして、ldconfigを実行します。
+
+また、bep-eng.dicも/usr/local/lib/dtalkerにコピーします。
+この英語カタカナ読み辞書については、環境変数BEP_DIC_PATHでファイルのフル
+パスを指定することで変更することも可能です。
+
+3.2 コンパイルとインストール
+
+config.h.inをconfig.hとしてコピーし、
+config.hの辞書パスとサウンドデバイス名が正しいことを確認します。
+
+#define SS_SYN_OUTPUT_DEVICE "/dev/dsp"
+    使用する音声出力デバイス名のデフォルト
+#define SS_DTALKER_DIC_DIR "/usr/local/lib/dtalker"
+    辞書格納ディレクトリ名
+#define SS_DTALKER_LNG_DIC "wd2k03.dic"
+    日本語言語処理辞書のファイル名
+#define SS_DTALKER_SYN_DIC "HIGH11.VSD"
+    日本語波形処理辞書のファイル名
+#define SS_ENG_KANA_DIC "bep-eng.dic"
+    英語→カタカナ読み変え辞書のファイル名
+
+また、Makefileでインストール先のprefix、コンパイラオプション(デバッグを
+有効にするかどうか)を確認し、必要なら変更してください。
+
+そして、
+make
+でbep-ssが作成されます。
+これがスピーチサーバの実行ファイルです。
+make installすると/usr/local/bin(デフォルト)にコピーされます。
+
+
+4. 動作テスト
+bep-ssのあるディレクトリに移動し、
+$ ./bep-ss [RET]
+と入力します。以下のような出力があれば起動しています。
+---------ここから
+DT: Initializing CreateSystem speech engine...
+TTS_Outloud: IBM Viavoice outloud speech synth...
+Bilingual Emacspeak Speech Server started!
+ready
+---------ここまで
+
+このreadyが表示されずにbep-ssが終了する場合には、辞書パス等を確認
+してください。
+
+続けて、以下のようなコマンドを入力します。
+----------ここから
+q {Hello in Japanese}
+tts_set_language en
+q {Hello in English}
+d
+----------ここまで
+これで、dと改行を入力した時に日本語と英語の出力があれば動作は成功です。
+
+
+5. BEPの実行
+
+本ソフトウェアを利用したBEPの実行については、BEPのelispパッケージ配布物
+に含まれるドキュメントを参照してください。
+
+
+6. 特殊な利用法
+
+6.1 環境変数
+
+以下の環境変数設定が利用可能です。
+
+  BEP_DIC_PATH
+    bep-eng.dicのフルパスを指定します。/usr/local/binにインストールして
+    いて、個人単位で英語→カタカナ読み変え辞書を変更したい場合などに使用
+    します。デフォルトはconfig.hでの設定に従います。
+
+  BEP_SS_OUTPUT_DEVICE
+    音声出力に利用するPCM再生デバイス名を指定します。
+    デフォルトはconfig.hでの設定に従います。
+
+  LD_LIBRARY_PATH
+    Linux用音声合成ライブラリの共有ライブラリファイルを/usr/libにインス
+    トールしない場合など、ライブラリがある場所をLD_LIBRARY_PATHに加える
+    ことで読み込む場所を指定できます。(See ld.so(8))
+
+6.2 日本語/英語のみの利用
+
+bep-ssは日本語または英語のみを使用するプログラムとしてコンパイルすること
+も可能になっています。
+
+config.hの以下の部分を必要に応じてコメントアウトします。
+
+#define SS_DTALKER
+#define SS_OUTLOUD
+
+また、Makefileの以下の部分も同様に必要な部分を残してコメントにします。
+
+# Build with DTalker(Create System TTS)
+OBJ_TTS_DTALKER = dtfunc.o dtvoice.o kanjifn.o dic.o 
+HED_TTS_DTALKER = dic.h dt.h dtvoice.h kanjifn.h
+LIB_DT = -lsyn -llng
+# Build with IBM ViaVoice Outloud TTS
+OBJ_TTS_OUTLOUD = outloudfunc.o
+HED_TTS_OUTLOUD = outloud.h
+LIB_VV = -libmeci50
+
+こうしてコンパイルすると、日本語または英語のみを利用可能なスピーチサーバ
+が作成できます。
+ただし、この方法は積極的にサポートするものではありません。
+
+
+7. 既知の不具合
+
+BEPで少し急いで操作をするとbep-ssのViaVoice部(英語音声合成)が停止して
+しまう場合があります。原因は調査中ですが、C-e C-sと操作することでEmacs上
+からbep-ssを再起動できます。
+
+
+8. 配布条件
+
+本ソフトウェアの配布はGNU Emacsと同じく、GPL(GNU General Public License)
+のVersion 2またはそれ以降に従います。
+詳しくは同梱のCOPYINGを参照してください。
+
+
+9. 連絡先
+
+本ソフトウェアやBEPに関する要望、意見、疑問点、文句、そして開発協力のあ
+りがたい申し出などは、
+bep-contact@argv.org
+宛に是非メールをください。よろしくお願いします。
+
+10. 謝辞
+
+本スピーチサーバで用いている英語→カタカナ変換辞書は静岡県立大学の石川准
+教授のDOS用スクリーンリーダー グラスルーツの辞書から派生しています。この
+大きな読み変え辞書の使用を許諾してくださった石川教授に感謝いたします。
+
+また、Emacspeakを開発されたDr. T. V. Raman(現IBM)他BEPの開発の動機をくれ
+たみなさまに感謝いたします。
+
+
+以上
+
+; Local Variables:
+; mode:text
+; End:
